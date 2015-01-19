@@ -1,6 +1,26 @@
 (($) ->
     $.fn.flexibleCheckbox = (jsInit) ->
 
+        drowBox = ($box) ->
+            settings = $box.data 'flexibleCheckbox'
+            $input = settings.target
+
+            if $input.prop 'checked'
+                $box
+                    .fadeOut 50, () ->
+                        $(@).removeClass settings.checkboxFalse
+                        .addClass settings.checkboxTrue
+                    .fadeIn 50
+            else
+                $box
+                    .fadeOut 50, () ->
+                        $(@).removeClass settings.checkboxTrue
+                            .addClass settings.checkboxFalse
+                    .fadeIn 50
+
+            if not $input.find('+div').is $box
+                $input.hide().after $box
+
         init = ($input) ->
             # default init
             settings =
@@ -28,33 +48,26 @@
                 settings.label = false
             settings
 
-        drowBox = ($box) ->
-            settings = $box.data 'flexibleCheckbox'
-            $input = settings.target
-
-            if $input.prop 'checked'
-                $box
-                    .fadeOut 50, () ->
-                        $(@).removeClass settings.checkboxFalse
-                        .addClass settings.checkboxTrue
-                    .fadeIn 50
-            else
-                $box
-                    .fadeOut 50, () ->
-                        $(@).removeClass settings.checkboxTrue
-                            .addClass settings.checkboxFalse
-                    .fadeIn 50
-
-            if not $input.find('+div').is $box
-                $input.hide().after $box
-
         clickHandler = () ->
             $box = $ @
             settings = $box.data 'flexibleCheckbox'
             $input = $ settings.target
 
-            $input.prop 'checked', not $input.prop 'checked'
-            settings.drowBox $box
+            if $input.is('[type=radio]') and not $input.prop('checked')
+                name = $input.attr('name')
+                $form = $input.parents 'form'
+                if $form.size()
+                    $rel = $form.find "[name=#{name}]"
+                else
+                    $rel = $ "[name=#{name}]"
+                $rel.each () ->
+                    if $(@).prop 'checked'
+                        $(@).prop 'checked', false
+                        settings.drowBox $(@).find '+ div'
+                                
+            if not $input.is('[type=radio]') or not $input.prop('checked')
+                $input.prop 'checked', not $input.prop 'checked'
+                settings.drowBox $box
 
         @.each () ->
             $input = $ @
