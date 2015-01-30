@@ -64,9 +64,10 @@
                     if $(@).prop 'checked'
                         $(@).prop 'checked', false
                         settings.drowBox $(@).find '+ div'
-                                
+
             if not $input.is('[type=radio]') or not $input.prop('checked')
                 $input.prop 'checked', not $input.prop 'checked'
+                $input.trigger 'change'
                 settings.drowBox $box
 
         @.each () ->
