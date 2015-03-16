@@ -46,6 +46,7 @@
                 settings.label = label
             else
                 settings.label = false
+            settings.disabled = $input.prop 'disabled'
             settings
 
         clickHandler = () ->
@@ -81,9 +82,10 @@
             settings.drowBox($box)
 
             # bindings
-            $box.click clickHandler
-            if settings.label
-                settings.label.click clickHandler.bind $box[0]
+            if not settings.disabled
+                $box.click clickHandler
+                if settings.label
+                    settings.label.click clickHandler.bind $box[0]
 
 
 
